@@ -1,4 +1,4 @@
-"""SAF-008 — Automated red-team safety harness tests."""
+"""SAF-012 — Automated red-team safety harness tests (issue #371)."""
 
 from __future__ import annotations
 
@@ -45,14 +45,12 @@ def test_known_attacks_are_defended():
     assert by_id["pi-override"].defended
 
 
-def test_harness_surfaces_a_known_gap():
-    """A payload the detectors miss is reported as bypassed, not hidden."""
-    # A read-only traversal slips past the command risk patterns; the harness
-    # should report it as bypassed rather than hide the gap.
+def test_bypassed_matches_undefended_results():
+    """`bypassed` lists exactly the undefended scenarios — invariant, so it
+    won't break as detectors improve and turn a bypass into a defense."""
     report = RedTeamHarness().run()
-    by_id = {r.scenario.id: r for r in report.results}
-    assert by_id["pt-read-passwd"].defended is False
-    assert any(r.scenario.id == "pt-read-passwd" for r in report.bypassed)
+    assert all(not r.defended for r in report.bypassed)
+    assert report.bypassed == [r for r in report.results if not r.defended]
 
 
 def test_by_category_counts_consistent():

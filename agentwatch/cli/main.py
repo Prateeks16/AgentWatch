@@ -1017,7 +1017,9 @@ def redteam(
     report = RedTeamHarness().run()
 
     if json_output:
-        console.print_json(data=report.to_dict())
+        # Plain stdout (no Rich formatting/ANSI) so the output is reliably
+        # machine-readable when piped or captured in CI.
+        typer.echo(json.dumps(report.to_dict(), indent=2))
         raise typer.Exit(0)
 
     score = report.resilience_score

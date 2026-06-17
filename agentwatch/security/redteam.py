@@ -1,5 +1,5 @@
 """
-SAF-008 — Automated Red-Team Safety Test Harness.
+SAF-012 — Automated Red-Team Safety Test Harness (issue #371, SAF-008 category).
 
 Drives a curated corpus of simulated attacks — prompt injection, path
 traversal, credential scans, and tool misuse — through AgentWatch's detection
@@ -243,7 +243,7 @@ class RedTeamHarness:
         if scenario.category is AttackCategory.PROMPT_INJECTION:
             scan = scan_text(scenario.payload)
             if scan.detected:
-                names = ", ".join(f.pattern for f in scan.findings)
+                names = ", ".join(f.pattern for f in scan.findings) or "pattern match"
                 return AttackResult(scenario, True, f"injection detected: {names}")
             return AttackResult(scenario, False, "no injection pattern matched")
 
